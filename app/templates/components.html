@@ -1,0 +1,129 @@
+{# Shared markup: the pieces that appear on more than one page. #}
+{% import "icons.html" as icons %}
+
+{% set PLACEHOLDER = '/images/products/placeholder.svg' %}
+
+{# An <img> that quietly swaps to a placeholder if the source cannot be loaded. #}
+{% macro smart_image(src, alt='', loading='lazy') %}
+<img
+  src="{{ src }}"
+  alt="{{ alt }}"
+  loading="{{ loading }}"
+  decoding="async"
+  onerror="this.onerror=null;this.src='{{ PLACEHOLDER }}'"
+/>
+{%- endmacro %}
+
+{% macro search_pill(value='', placeholder='Search…', label='Search products', classes='', attrs='') %}
+<form class="search-pill{{ ' ' ~ classes if classes }}" role="search" method="get" action="/shop" {{ attrs|safe }}>
+  <input
+    type="search"
+    name="search"
+    value="{{ value }}"
+    placeholder="{{ placeholder }}"
+    aria-label="{{ label }}"
+  />
+  <button type="submit" aria-label="Search">{{ icons.search(19) }}</button>
+</form>
+{%- endmacro %}
+
+{% macro product_card(product, eager=false, show_views=false) %}
+{% set href = '/product/' ~ product.slug %}
+<article class="product-card">
+  <div class="product-card__media">
+    {% if product.is_on_sale %}<span class="badge">Sale</span>{% endif %}
+    {% if not product.in_stock %}<span class="badge badge--out">Sold out</span>{% endif %}
+
+    <a href="{{ href }}" tabindex="-1" aria-hidden="true">
+      {{ smart_image(product.image_url, '', 'eager' if eager else 'lazy') }}
+    </a>
+
+    <a class="product-card__cta" href="{{ href }}">View Product</a>
+  </div>
+
+  <div class="product-card__body">
+    <h3><a class="product-card__name" href="{{ href }}">{{ product.name }}</a></h3>
+
+    <div class="price-row">
+      <span class="price">{{ product.price|price }}</span>
+      {% if product.is_on_sale %}<span class="price--old">{{ product.old_price|price }}</span>{% endif %}
+    </div>
+
+    {% if show_views %}
+      <p class="product-card__meta">{{ icons.eye() }}{{ product.views|count }} views</p>
+    {% endif %}
+  </div>
+</article>
+{%- endmacro %}
+
+{% macro blog_card(post) %}
+{% set href = '/blog/' ~ post.slug %}
+<article class="blog-card">
+  <a class="blog-card__media" href="{{ href }}" tabindex="-1" aria-hidden="true">
+    {{ smart_image(post.image_url) }}
+  </a>
+
+  <p class="blog-card__meta">By <strong>{{ post.author }}</strong> / {{ post.published_at|date }}</p>
+
+  <h3 class="blog-card__title"><a href="{{ href }}">{{ post.title }}</a></h3>
+
+  <p class="blog-card__excerpt">{{ post.excerpt }}</p>
+</article>
+{%- endmacro %}
+
+{% macro page_head(title, crumbs) %}
+<div class="page-head">
+  <div class="container">
+    <h1 class="page-head__title">{{ title }}</h1>
+    <p class="breadcrumbs">
+      {%- for label, href in crumbs -%}
+        {%- if not loop.first %} / {% endif -%}
+        {%- if href %}<a href="{{ href }}">{{ label }}</a>{% else %}{{ label }}{% endif -%}
+      {%- endfor -%}
+    </p>
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro empty_state(title, message, action_label, action_href) %}
+<div class="state">
+  <p class="state__title">{{ title }}</p>
+  {% if message %}<p>{{ message }}</p>{% endif %}
+  {% if action_label %}
+    <div style="margin-top: 22px"><a class="btn" href="{{ action_href }}">{{ action_label }}</a></div>
+  {% endif %}
+</div>
+{%- endmacro %}
+
+{% macro pagination(page, total_pages, search, category, sort, on_sale) %}
+{% if total_pages > 1 %}
+<nav class="pagination" aria-label="Pagination" data-pagination>
+  {% set link = namespace() %}
+  <a
+    class="pagination__prev"
+    href="{{ shop_url(search=search, category=category, sort=sort, on_sale=on_sale, page=page - 1) }}"
+    {% if page <= 1 %}aria-disabled="true" tabindex="-1"{% endif %}
+    >Prev</a
+  >
+
+  {% for entry in page_window(page, total_pages) %}
+    {% if entry == 'gap' %}
+      <span style="padding: 0 6px; color: var(--muted)">…</span>
+    {% else %}
+      <a
+        href="{{ shop_url(search=search, category=category, sort=sort, on_sale=on_sale, page=entry) }}"
+        {% if entry == page %}aria-current="page"{% endif %}
+        >{{ entry }}</a
+      >
+    {% endif %}
+  {% endfor %}
+
+  <a
+    class="pagination__next"
+    href="{{ shop_url(search=search, category=category, sort=sort, on_sale=on_sale, page=page + 1) }}"
+    {% if page >= total_pages %}aria-disabled="true" tabindex="-1"{% endif %}
+    >Next</a
+  >
+</nav>
+{% endif %}
+{%- endmacro %}

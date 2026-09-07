@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% import "components.html" as ui %}
+{% import "icons.html" as icons %}
+
+{% block content %}
+  {{ ui.page_head('About Qlonil', [('Home', '/'), ('About', none)]) }}
+
+  {# -------------------------------------------------------------- story #}
+  <section class="section">
+    <div class="container about-split">
+      <div class="about-split__media">
+        <img src="/images/about/studio.svg" alt="Illustration of the Qlonil studio" width="600" height="400" />
+      </div>
+
+      <div>
+        <p class="eyebrow">Our story</p>
+        <h2 class="section__title" style="text-align: left">A small studio with a long memory</h2>
+        <div class="prose" style="margin-top: 24px">
+          <p>
+            Qlonil started in 2014 above a dry cleaner on Oxford Street, with one pattern cutter, a
+            borrowed machine and a stubborn conviction that most clothes were being made too fast to
+            be made well.
+          </p>
+          <p>
+            A decade later the studio is a little larger and the conviction has not moved. We still
+            cut in small runs, still keep the same three mills on speed dial, and still put every
+            sample through a season of real wear before it reaches the shop.
+          </p>
+          <p>
+            What changed is who wears it. Pieces that began as a London answer to a London winter now
+            turn up in thirty-one countries, which is a responsibility we take seriously every time we
+            choose a fabric.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# -------------------------------------------------------------- stats #}
+  <section class="section section--tight section--soft">
+    <div class="container stat-grid">
+      {% for value, label in stats %}
+        <div class="stat">
+          <p class="stat__value">{{ value }}</p>
+          <p class="stat__label">{{ label }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  {# ------------------------------------------------------------- values #}
+  <section class="section">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title">What we hold to</h2>
+        <p class="section__sub">
+          Three rules that decide what we make, what we refuse, and what we quietly discontinue when
+          it stops being good enough.
+        </p>
+      </div>
+
+      <div class="value-grid">
+        {% for icon_name, title, body in values %}
+          <div class="value-card">
+            <div class="value-card__icon">{{ icons.named(icon_name) }}</div>
+            <h3>{{ title }}</h3>
+            <p>{{ body }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {# -------------------------------------------------------- craft split #}
+  <section class="section section--soft">
+    <div class="container about-split about-split--reverse">
+      <div class="about-split__media">
+        <img
+          src="/images/about/workshop.svg"
+          alt="Illustration of a workshop bench with tools"
+          width="600"
+          height="400"
+        />
+      </div>
+
+      <div>
+        <p class="eyebrow">How we work</p>
+        <h2 class="section__title" style="text-align: left">Slower than we could be, on purpose</h2>
+        <div class="prose" style="margin-top: 24px">
+          <p>
+            Every style starts as a paper pattern and ends as a wear test. In between there are
+            usually four samples, two arguments and one fabric we wanted to use but could not source
+            responsibly.
+          </p>
+          <p>
+            We publish what we learn along the way in the journal — from how to read a fabric label to
+            the arithmetic of buying a boot that can be resoled.
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap">
+          <a class="btn" href="/shop">Shop the collection</a>
+          <a class="btn btn--ghost" href="/contact">Talk to us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

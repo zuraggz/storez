@@ -1,0 +1,23 @@
+{% import "components.html" as ui %}
+
+<p class="result-count" style="margin-bottom: 26px">
+  <strong>{{ result.total_count }}</strong> {{ 'product' if result.total_count == 1 else 'products' }}
+  {%- if search %} matching “<strong>{{ search }}</strong>”{% endif %}
+</p>
+
+{% if result.items %}
+  <div class="product-grid">
+    {% for product in result.items %}
+      {{ ui.product_card(product, eager=loop.index0 < 3, show_views=sort == 'popular') }}
+    {% endfor %}
+  </div>
+
+  {{ ui.pagination(result.page, result.total_pages, search, category, sort, on_sale) }}
+{% else %}
+  {{ ui.empty_state(
+    'Nothing matched that search',
+    'Try a different word, or clear the filters to see the whole catalogue.',
+    'Clear filters',
+    '/shop',
+  ) }}
+{% endif %}

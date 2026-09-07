@@ -1,0 +1,167 @@
+{% import "icons.html" as icons %}
+{% import "components.html" as ui %}
+{% set nav_items = [
+  ('/', 'Home', true),
+  ('/about', 'About', false),
+  ('/shop', 'Shop', false),
+  ('/blog', 'Pages', true),
+  ('/contact', 'Contact', false),
+] %}
+{% set path = request.url.path %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{% block title %}{{ page_title|default('Qlonil — Modern Fashion Store') }}{% endblock %}</title>
+    <meta
+      name="description"
+      content="{% block description %}Qlonil is a modern fashion store: shirts, denim, bags, shoes and accessories, made in small batches.{% endblock %}"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" data-header>
+      <div class="container site-header__inner">
+        <a href="/" class="logo">Qlonil</a>
+
+        <nav class="nav" aria-label="Primary">
+          {% for href, label, caret in nav_items %}
+            <a
+              href="{{ href }}"
+              class="nav__link"
+              {% if (href == '/' and path == '/') or (href != '/' and path.startswith(href)) %}aria-current="page"{% endif %}
+            >
+              {{ label }}{% if caret %}{{ icons.chevron_down() }}{% endif %}
+            </a>
+          {% endfor %}
+        </nav>
+
+        <div class="header__actions">
+          {{ ui.search_pill() }}
+
+          <a href="/account" class="icon-btn" aria-label="Account">{{ icons.user() }}</a>
+
+          <button type="button" class="icon-btn" data-cart-open aria-label="Cart, 0 items">
+            {{ icons.cart() }}
+            <span class="cart-badge" data-cart-count hidden>0</span>
+          </button>
+
+          <button type="button" class="burger" data-menu-toggle aria-label="Open menu" aria-expanded="false">
+            <span data-menu-icon="open">{{ icons.burger() }}</span>
+            <span data-menu-icon="close" hidden>{{ icons.close() }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile-nav" data-mobile-nav hidden>
+        {% for href, label, caret in nav_items %}
+          <a href="{{ href }}"
+            {% if (href == '/' and path == '/') or (href != '/' and path.startswith(href)) %}aria-current="page"{% endif %}
+          >{{ label }}</a>
+        {% endfor %}
+        {{ ui.search_pill() }}
+      </div>
+    </header>
+
+    <main id="main">{% block content %}{% endblock %}</main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a href="/" class="logo">Qlonil</a>
+          <p class="footer__copy">
+            © {{ now().year }} design and developed by <a href="#top">Brandbes</a>.
+            <br />
+            Built with Python, FastAPI and PostgreSQL.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="footer__title">Visit us</h2>
+          <ul class="footer__list">
+            {% for line in settings.contact_address %}<li>{{ line }}</li>{% endfor %}
+            <li><a href="mailto:{{ settings.contact_email }}">{{ settings.contact_email }}</a></li>
+            <li><a href="tel:{{ settings.contact_phone|replace(' ', '') }}">{{ settings.contact_phone }}</a></li>
+          </ul>
+        </div>
+
+        <div id="newsletter">
+          <h2 class="footer__title">Get 32% off</h2>
+          <p class="footer__copy" style="margin-top: 0">By subscribe to our newsletter</p>
+
+          <form class="newsletter" method="post" action="/newsletter" data-newsletter>
+            <input type="hidden" name="next" value="{{ path }}" />
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="Enter Your Email"
+              aria-label="Email address"
+            />
+            <button type="submit" aria-label="Subscribe">{{ icons.send() }}</button>
+          </form>
+
+          {% set subscribed = request.query_params.get('subscribed') %}
+          <p
+            class="form-note {{ 'form-note--error' if subscribed == 'invalid' else 'form-note--ok' }}"
+            data-newsletter-note
+            role="status"
+            {% if not subscribed %}hidden{% endif %}
+          >
+            {%- if subscribed == 'ok' -%}
+              Thanks for subscribing. Your 32% code is on its way.
+            {%- elif subscribed == 'already' -%}
+              You are already on the list.
+            {%- elif subscribed == 'invalid' -%}
+              That does not look like a valid email address.
+            {%- endif -%}
+          </p>
+        </div>
+
+        <div>
+          <h2 class="footer__title">Follow us on</h2>
+          <div class="socials">
+            <a href="https://facebook.com" aria-label="Facebook" rel="noreferrer noopener" target="_blank">{{ icons.facebook() }}</a>
+            <a href="https://instagram.com" aria-label="Instagram" rel="noreferrer noopener" target="_blank">{{ icons.instagram() }}</a>
+            <a href="https://twitter.com" aria-label="Twitter" rel="noreferrer noopener" target="_blank">{{ icons.twitter() }}</a>
+            <a href="https://skype.com" aria-label="Skype" rel="noreferrer noopener" target="_blank">{{ icons.skype() }}</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    {# ------------------------------------------------------------- cart #}
+    <div class="drawer-backdrop" data-cart-backdrop hidden></div>
+
+    <aside class="drawer" data-cart-drawer role="dialog" aria-modal="true" aria-label="Shopping cart" hidden>
+      <div class="drawer__head">
+        <h2 class="drawer__title">Your cart</h2>
+        <button type="button" class="icon-btn" data-cart-close aria-label="Close cart">{{ icons.close() }}</button>
+      </div>
+
+      <div class="drawer__body" data-cart-body></div>
+
+      <div class="drawer__foot" data-cart-foot hidden>
+        <div class="drawer__total">
+          <span>Subtotal</span>
+          <span data-cart-subtotal>$ 0.00 USD</span>
+        </div>
+        <button type="button" class="btn btn--block" data-cart-clear>Clear cart</button>
+        <p class="form-note" style="text-align: center">Checkout is out of scope for this build.</p>
+      </div>
+    </aside>
+
+    <script src="/js/store.js" defer></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

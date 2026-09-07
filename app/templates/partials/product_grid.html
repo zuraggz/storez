@@ -1,0 +1,4 @@
+{% import "components.html" as ui %}
+<div class="product-grid">
+  {% for product in products %}{{ ui.product_card(product, eager=loop.index0 < 3) }}{% endfor %}
+</div>

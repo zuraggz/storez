@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% import "components.html" as ui %}
+
+{% block content %}
+  {{ ui.page_head('Contact', [('Home', '/'), ('Contact', none)]) }}
+
+  <div class="section">
+    <div class="container contact-grid">
+      <div>
+        <p class="eyebrow">Get in touch</p>
+        <h2 class="section__title" style="text-align: left; font-size: 2rem">We read everything</h2>
+        <div class="prose" style="margin-top: 20px">
+          <p>
+            Questions about sizing, a repair, or an order that has gone astray — send it here and a
+            person will reply, usually within two working days.
+          </p>
+        </div>
+
+        <dl class="pdp__facts" style="margin-top: 30px">
+          <div>
+            <dt>Studio</dt>
+            <dd>{{ settings.contact_address|join(' ') }}</dd>
+          </div>
+          <div>
+            <dt>Email</dt>
+            <dd><a href="mailto:{{ settings.contact_email }}">{{ settings.contact_email }}</a></dd>
+          </div>
+          <div>
+            <dt>Phone</dt>
+            <dd><a href="tel:{{ settings.contact_phone|replace(' ', '') }}">{{ settings.contact_phone }}</a></dd>
+          </div>
+          <div>
+            <dt>Hours</dt>
+            <dd>Monday to Friday, 9am – 6pm GMT</dd>
+          </div>
+        </dl>
+      </div>
+
+      <form method="post" action="/contact" novalidate data-contact-form>
+        <label class="field">
+          <span>Your name</span>
+          <input
+            type="text"
+            name="name"
+            autocomplete="name"
+            value="{{ form.get('name', '') }}"
+            {% if errors.get('name') %}aria-invalid="true"{% endif %}
+          />
+          <span class="field__error" data-error-for="name" {% if not errors.get('name') %}hidden{% endif %}>
+            {{ errors.get('name', '') }}
+          </span>
+        </label>
+
+        <label class="field">
+          <span>Email address</span>
+          <input
+            type="email"
+            name="email"
+            autocomplete="email"
+            value="{{ form.get('email', '') }}"
+            {% if errors.get('email') %}aria-invalid="true"{% endif %}
+          />
+          <span class="field__error" data-error-for="email" {% if not errors.get('email') %}hidden{% endif %}>
+            {{ errors.get('email', '') }}
+          </span>
+        </label>
+
+        <label class="field">
+          <span>Subject (optional)</span>
+          <input type="text" name="subject" value="{{ form.get('subject', '') }}" />
+        </label>
+
+        <label class="field">
+          <span>Message</span>
+          <textarea name="message" {% if errors.get('message') %}aria-invalid="true"{% endif %}>{{ form.get('message', '') }}</textarea>
+          <span class="field__error" data-error-for="message" {% if not errors.get('message') %}hidden{% endif %}>
+            {{ errors.get('message', '') }}
+          </span>
+        </label>
+
+        <button type="submit" class="btn">Send message</button>
+
+        {% if sent %}
+          <p class="form-note form-note--ok" role="status">{{ sent }}</p>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+{% endblock %}

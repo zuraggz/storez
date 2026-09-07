@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import "components.html" as ui %}
+
+{% block description %}{{ post.excerpt }}{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <div class="container">
+      <h1 class="page-head__title" style="max-width: 20ch; margin: 0 auto">{{ post.title }}</h1>
+      <p class="breadcrumbs">
+        By {{ post.author }} / {{ post.published_at|date }} / {{ views|count }} views
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container" style="max-width: 860px">
+      {{ ui.smart_image(post.image_url, '', 'eager') }}
+
+      <div class="prose" style="margin-top: 40px">
+        {% for paragraph in post.paragraphs %}<p>{{ paragraph }}</p>{% endfor %}
+      </div>
+
+      <div style="margin-top: 44px">
+        <a class="btn btn--ghost" href="/blog">All articles</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

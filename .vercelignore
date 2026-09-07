@@ -1,0 +1,11 @@
+# Nothing here needs to reach the deployment bundle.
+.venv/
+tests/
+scripts/
+docker-compose.yml
+Dockerfile
+requirements-dev.txt
+.env
+*.db
+__pycache__/
+.pytest_cache/

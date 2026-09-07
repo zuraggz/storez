@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import "components.html" as ui %}
+
+{% block content %}
+  {{ ui.page_head('Journal', [('Home', '/'), ('Journal', none)]) }}
+
+  <div class="section">
+    <div class="container">
+      {% if posts %}
+        <div class="blog-grid">
+          {% for post in posts %}{{ ui.blog_card(post) }}{% endfor %}
+        </div>
+      {% else %}
+        {{ ui.empty_state('Nothing published yet', 'Check back soon.', 'Browse the shop', '/shop') }}
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% import "components.html" as ui %}
+{% import "icons.html" as icons %}
+
+{% block content %}
+  {# ------------------------------------------------------------ hero #}
+  <section
+    class="hero"
+    aria-roledescription="carousel"
+    aria-label="Featured collections"
+    data-hero
+  >
+    <button type="button" class="hero__arrow hero__arrow--prev" data-hero-prev aria-label="Previous slide">
+      {{ icons.chevron_left() }}
+    </button>
+
+    <div class="container hero__inner">
+      {% for slide in hero_slides %}
+        <div class="hero__slide" data-hero-slide {% if not loop.first %}hidden{% endif %}>
+          <div>
+            <p class="hero__eyebrow">{{ slide.eyebrow }}</p>
+            <h1 class="hero__title">{{ slide.title }}</h1>
+            <a class="link-underline" href="{{ slide.href }}">Discover More</a>
+          </div>
+
+          <div class="hero__media">
+            <img src="{{ slide.image }}" alt="{{ slide.alt }}" width="620" height="620" />
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <button type="button" class="hero__arrow hero__arrow--next" data-hero-next aria-label="Next slide">
+      {{ icons.chevron_right() }}
+    </button>
+
+    <div class="hero__dots">
+      {% for slide in hero_slides %}
+        <button
+          type="button"
+          class="hero__dot"
+          data-hero-dot
+          aria-current="{{ 'true' if loop.first else 'false' }}"
+          aria-label="Go to slide {{ loop.index }}"
+        ></button>
+      {% endfor %}
+    </div>
+  </section>
+
+  {# ---------------------------------------------------- product tabs #}
+  <section class="section" id="collection" aria-labelledby="collection-heading">
+    <div class="container">
+      <h2 id="collection-heading" class="sr-only">Shop the collection</h2>
+
+      <div class="tabs" role="tablist" aria-label="Product collections">
+        {% for key, tab in tabs.items() %}
+          <a
+            class="tab"
+            role="tab"
+            href="/?tab={{ key }}#collection"
+            data-tab="{{ key }}"
+            aria-selected="{{ 'true' if key == active_tab else 'false' }}"
+            >{{ tab[0] }}</a
+          >
+        {% endfor %}
+      </div>
+      <div class="tabs-spacer"></div>
+
+      <div data-tab-panel>{% include "partials/product_grid.html" %}</div>
+
+      <div style="text-align: center; margin-top: 56px">
+        <a class="btn btn--ghost" href="/shop">View all products</a>
+      </div>
+    </div>
+  </section>
+
+  {# -------------------------------------------------------- promises #}
+  <section class="section section--tight section--soft">
+    <div class="container value-grid">
+      {% for icon_name, title, body in promises %}
+        <div class="value-card">
+          <div class="value-card__icon">{{ icons.named(icon_name) }}</div>
+          <h3>{{ title }}</h3>
+          <p>{{ body }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  {# ----------------------------------------------------- latest news #}
+  <section class="section" aria-labelledby="news-heading">
+    <div class="container">
+      <div class="section__head">
+        <h2 id="news-heading" class="section__title">Latest News</h2>
+        <p class="section__sub">
+          Notes from the studio on fabric, fit and the things we keep coming back to — published
+          whenever we have something worth saying.
+        </p>
+      </div>
+
+      <div class="blog-grid">
+        {% for post in posts %}{{ ui.blog_card(post) }}{% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

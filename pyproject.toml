@@ -1,0 +1,22 @@
+[project]
+name = "qlonil"
+version = "1.0.0"
+description = "Qlonil — a Python storefront: FastAPI, SQLAlchemy, Jinja2 and Postgres."
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore:Using `httpx` with `starlette.testclient`:UserWarning",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ISC", "RUF"]
+# UP046 wants PEP 695 generics, which need Python 3.12; this project targets 3.11+.
+ignore = ["E501", "UP046"]

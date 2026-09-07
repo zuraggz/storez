@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import "components.html" as ui %}
+
+{% block content %}
+  {{ ui.page_head('Account', [('Home', '/'), ('Account', none)]) }}
+
+  <div class="section">
+    <div class="container" style="max-width: 700px">
+      <div class="state">
+        <p class="state__title">Accounts are not enabled in this build</p>
+        <p>
+          The storefront browses, searches and carts without signing in — the API ships without an
+          authentication layer, so there is nothing to log into yet. The cart lives in your browser
+          and survives a refresh.
+        </p>
+        <div style="margin-top: 26px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap">
+          <a class="btn" href="/shop">Continue shopping</a>
+          <a class="btn btn--ghost" href="/contact">Contact the studio</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

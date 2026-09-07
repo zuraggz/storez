@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="section">
+    <div class="container">
+      <div class="state state--error">
+        <p class="state__title">Something went wrong at our end</p>
+        <p>The page could not be built. It has been logged; try again in a moment.</p>
+        <div style="margin-top: 26px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap">
+          <a class="btn" href="/">Back home</a>
+          <a class="btn btn--ghost" href="/shop">Browse the shop</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

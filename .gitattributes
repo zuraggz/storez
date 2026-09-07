@@ -1,0 +1,9 @@
+# The app is built on Windows and runs on Linux (Vercel, Docker), so keep LF in
+# the repository and in every checkout. CRLF in a Dockerfile or a shell script
+# breaks the shell that runs it.
+* text=auto eol=lf
+
+*.svg text eol=lf
+*.png binary
+*.jpg binary
+*.ico binary

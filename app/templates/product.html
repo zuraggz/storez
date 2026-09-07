@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% import "components.html" as ui %}
+{% import "icons.html" as icons %}
+
+{% block description %}{{ product.short_description }}{% endblock %}
+
+{% block content %}
+  {{ ui.page_head(product.name, [
+    ('Home', '/'),
+    ('Shop', '/shop'),
+    (product.category.name, shop_url(category=product.category.slug)),
+    (product.name, none),
+  ]) }}
+
+  <div class="section">
+    <div class="container pdp">
+      {# ---------------------------------------------------------- gallery #}
+      <div data-gallery>
+        <div class="pdp__main-image">
+          {{ ui.smart_image(product.gallery[0], product.name, 'eager') }}
+        </div>
+
+        {% if product.gallery|length > 1 %}
+          <div class="pdp__thumbs">
+            {% for url in product.gallery %}
+              <button
+                type="button"
+                class="pdp__thumb"
+                data-gallery-thumb="{{ url }}"
+                aria-current="{{ 'true' if loop.first else 'false' }}"
+                aria-label="Show image {{ loop.index }} of {{ product.gallery|length }}"
+              >
+                {{ ui.smart_image(url) }}
+              </button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      {# ------------------------------------------------------------- info #}
+      <div>
+        <p class="pdp__eyebrow">{{ product.category.name }}</p>
+        <h2 class="pdp__title">{{ product.name }}</h2>
+
+        <div class="pdp__rating">
+          <span class="stars" aria-hidden="true">
+            {% for index in range(5) %}{{ icons.star(index < product.rating|float|round|int) }}{% endfor %}
+          </span>
+          <span>{{ '%.1f'|format(product.rating|float) }} · {{ product.review_count }} reviews</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px">
+            {{ icons.eye() }} {{ views|count }} views
+          </span>
+        </div>
+
+        <div class="pdp__price">
+          <span class="price">{{ product.price|price }}</span>
+          {% if product.is_on_sale %}
+            <span class="price--old">{{ product.old_price|price }}</span>
+            <span class="badge" style="position: static">−{{ product.discount_percent }}%</span>
+          {% endif %}
+        </div>
+
+        <p class="pdp__blurb">{{ product.short_description }}</p>
+
+        <dl class="pdp__facts">
+          <div>
+            <dt>SKU</dt>
+            <dd>{{ product.sku }}</dd>
+          </div>
+          <div>
+            <dt>Category</dt>
+            <dd><a href="{{ shop_url(category=product.category.slug) }}">{{ product.category.name }}</a></dd>
+          </div>
+          <div>
+            <dt>Availability</dt>
+            <dd>
+              {%- if product.in_stock %}In stock — {{ product.stock }} left{% else %}Currently sold out{% endif -%}
+            </dd>
+          </div>
+        </dl>
+
+        <div
+          class="pdp__buy"
+          data-add-to-cart
+          data-slug="{{ product.slug }}"
+          data-name="{{ product.name }}"
+          data-price="{{ product.price }}"
+          data-image="{{ product.image_url }}"
+          data-stock="{{ product.stock }}"
+        >
+          <div class="qty">
+            <button type="button" data-qty-down aria-label="Decrease quantity" disabled>−</button>
+            <span aria-live="polite" data-qty-value>1</span>
+            <button
+              type="button"
+              data-qty-up
+              aria-label="Increase quantity"
+              {% if product.stock <= 1 %}disabled{% endif %}
+            >
+              +
+            </button>
+          </div>
+
+          <button type="button" class="btn" data-add {% if not product.in_stock %}disabled{% endif %}>
+            {{ 'Add to cart' if product.in_stock else 'Sold out' }}
+          </button>
+        </div>
+
+        <p class="form-note form-note--ok" role="status" data-added hidden>Added to your cart.</p>
+
+        <noscript>
+          <p class="form-note">
+            The cart needs JavaScript. Everything else on this page works without it.
+          </p>
+        </noscript>
+
+        <div class="prose" style="margin-top: 34px">
+          <p>{{ product.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ---------------------------------------------------------------- related #}
+  {% if related %}
+    <section class="section section--soft" aria-labelledby="related-heading">
+      <div class="container">
+        <div class="section__head">
+          <h2 id="related-heading" class="section__title">You might also like</h2>
+        </div>
+
+        <div class="product-grid product-grid--4">
+          {% for other in related %}{{ ui.product_card(other) }}{% endfor %}
+        </div>
+      </div>
+    </section>
+  {% endif %}
+{% endblock %}

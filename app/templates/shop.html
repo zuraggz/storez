@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% import "components.html" as ui %}
+{% import "icons.html" as icons %}
+
+{% block content %}
+  {{ ui.page_head('Shop', [('Home', '/'), ('Shop', none)]) }}
+
+  <div class="section">
+    <div class="container shop-layout">
+      {# ---------------------------------------------------------- filters #}
+      <aside class="filters" aria-label="Product filters">
+        <div class="filters__group">
+          <h2 class="filters__title">Categories</h2>
+          <div class="filters__list">
+            <a
+              class="filters__item"
+              href="{{ shop_url(search=search, category='all', sort=sort, on_sale=on_sale) }}"
+              aria-pressed="{{ 'true' if category == 'all' else 'false' }}"
+            >
+              <span>All products</span>
+            </a>
+
+            {% for item, product_count in categories %}
+              <a
+                class="filters__item"
+                href="{{ shop_url(search=search, category=item.slug, sort=sort, on_sale=on_sale) }}"
+                aria-pressed="{{ 'true' if category == item.slug else 'false' }}"
+              >
+                <span>{{ item.name }}</span>
+                <span class="filters__count">{{ product_count }}</span>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="filters__group">
+          <h2 class="filters__title">Offers</h2>
+
+          <form method="get" action="/shop" data-auto-submit>
+            {% if search %}<input type="hidden" name="search" value="{{ search }}" />{% endif %}
+            {% if category != 'all' %}<input type="hidden" name="category" value="{{ category }}" />{% endif %}
+            {% if sort != 'popular' %}<input type="hidden" name="sort" value="{{ sort }}" />{% endif %}
+
+            <label class="toggle">
+              <input type="checkbox" name="onSale" value="true" {% if on_sale %}checked{% endif %} />
+              On sale only
+            </label>
+
+            <noscript>
+              <button type="submit" class="btn btn--ghost btn--block" style="margin-top: 16px">Apply</button>
+            </noscript>
+          </form>
+        </div>
+
+        {% if has_active_filters %}
+          <div class="filters__group">
+            <a class="btn btn--ghost btn--block" href="/shop">Clear filters</a>
+          </div>
+        {% endif %}
+      </aside>
+
+      {# ---------------------------------------------------------- results #}
+      <div>
+        <div class="shop-toolbar">
+          {{ ui.search_pill(
+            value=search,
+            placeholder='Search products by name…',
+            label='Search products by name',
+            classes='shop-search',
+            attrs='data-shop-search',
+          ) }}
+
+          <form method="get" action="/shop" data-auto-submit>
+            {% if search %}<input type="hidden" name="search" value="{{ search }}" />{% endif %}
+            {% if category != 'all' %}<input type="hidden" name="category" value="{{ category }}" />{% endif %}
+            {% if on_sale %}<input type="hidden" name="onSale" value="true" />{% endif %}
+
+            <label class="sort-field">
+              Sort by
+              <select class="select" name="sort">
+                {% for value, label in sort_options %}
+                  <option value="{{ value }}" {% if value == sort %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </label>
+
+            <noscript>
+              <button type="submit" class="btn btn--ghost" style="margin-top: 12px">Sort</button>
+            </noscript>
+          </form>
+        </div>
+
+        <div data-shop-results>{% include "partials/shop_results.html" %}</div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
